@@ -106,3 +106,28 @@ export const getMe = async (req, res) => {
     });
   }
 };
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await UserModel.find();
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        message: "Пользователи не найдены",
+      });
+    }
+
+    const sanitizedUsers = users.map((user) => {
+      const { passwordHash, ...userData } = user._doc;
+      return userData;
+    });
+
+    return res.json(sanitizedUsers);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Произошла ошибка при получении пользователей",
+      error: err.message,
+    });
+  }
+};

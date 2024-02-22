@@ -53,15 +53,24 @@ app.post(
   handleValidationErrors,
   UserController.register
 );
-// ! get
+// ! get one
 app.get("/auth/me", checkAuth, UserController.getMe);
-
 app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   res.json({
     url: `/uploads/${req.file.originalname}`,
   });
 });
+// ! get all
+app.get("/auth/all", UserController.getAllUsers);
 
+app.post("/uploads", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "Файл не был загружен" });
+  }
+  res.json({
+    url: `/uploads/${req.file.originalname}`,
+  });
+});
 // ! posts
 
 app.get("/tags", PostController.getLastTags);
